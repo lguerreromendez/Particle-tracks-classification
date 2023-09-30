@@ -26,3 +26,7 @@ It's important to mention that the software has a small issue when it comes to r
 # OBJECTIVE
 This is why the use of this software is crucial, aiming to be able to:
 ## individualize each detected track in a frame, and assign it the corresponding classified particle type
+
+For example, get this track detected in a frame and assign it as a muon,
+
+![picture](images/image2.PNG)
