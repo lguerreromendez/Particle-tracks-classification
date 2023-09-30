@@ -36,3 +36,5 @@ The main idea, in broad strokes, is the analysis of the measurement video using 
 At the same time, we analyze the corresponding part of the screen where the detected particle and the classification provided by the software are indicated. Once again, we can analyze the differences in the text between two consecutive frames and determine in each frame which new particle has been detected
 
 This way, by analyzing two consecutive frames of the video, we can obtain the detected track and the particle assignment provided by the software
+
+
