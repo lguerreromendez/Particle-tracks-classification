@@ -118,8 +118,58 @@ img1=im_list[0][y1:y2, x1:x2] #analyze one frame at these pixels
 img1_dots=img1[160:190,170:220] #plot this image
 ```
 
-![picture](images/image2.PNG)
+![picture](images/image4.png)
 
 Once we have a zoom of this part of the image, we can analyze this text using computer vision modules and text analysis
 
+```python
+tess.pytesseract.tesseract_cmd=r'C:\Program Files\Tesseract-OCR\tesseract.exe'
+```
 
+The line of code `tess.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'` is used to configure the location of the Tesseract OCR executable on your system. It allows the pytesseract library to know where to find the Tesseract OCR program for optical character recognition (OCR).
+
+Here's a more detailed explanation of what this line of code does:
+
+`tess.pytesseract: pytesseract` is a Python library that provides an interface for using Tesseract OCR in Python. This library is used for performing OCR tasks, such as extracting text from images or scans."
+
+
+With this `textpattern` function, we will be able to check if the module finds a certain text pattern in this zoomed image of the frame. 
+For example, we will be able to recognize the text pattern 'electrons:' and, consequently, the number that appears to its right, '527'
+```python
+def textpattern(pattern,text, particle):
+# We use a regular expression to search for the number following 'Electrons:'
+    # we search the pattern in the text
+    match = re.search(pattern, text)
+    # verify if the module has found the number and we obtain it
+    if match:
+        numero = int(match.group(1))
+        # print("Número de ",particle,":", numero)
+        return numero
+    else:
+        print("Número de ",particle," no encontrado.")
+```
+
+
+
+It's possible that the program may not be able to recognize the text, which is controlled with the 'print' statement in the 'else' block
+
+With the following function, we will obtain the number of electrons, muons, alphas, and the total indicated in the frame. 
+This function `n_particle()` calls the previous `textpattern()` function, to which the corresponding text pattern we want to search for is applied 
+(for example, `pattern_e = r"Electrons:\s*(\d+)"` for electrons).
+
+```python
+def n_particles(image):
+    x1, y1, x2, y2 = 1270, 410, 1760,810 
+    img1=image[y1:y2, x1:x2]
+    text=tess.image_to_string(img1)
+    pattern_e = r"Electrons:\s*(\d+)"
+    pattern_muons = r"Muons:\s*(\d+)"
+    pattern_alphas = r"Alphas:\s*(\d+)"
+    pattern_total= r"Total:\s*(\d+)"
+    n_total=textpattern(pattern_total,text,  'total')
+    n_alphas=textpattern(pattern_alphas,text, 'alphas')
+    n_e=textpattern(pattern_e,text, 'electrones')
+    n_muons=textpattern(pattern_muons,text, 'muons')
+    
+    return n_total, n_alphas, n_e, n_muons
+```
