@@ -175,3 +175,73 @@ def n_particles(image):
 ```
  and the corresponding values are stored in the variables: n_total, n_alphas, n_e, n_muons
 
+
+With the following function, we study the various differts parameters between two consecutive frames, as well as the different traces found in the image, such as differences in the text with the corresponding number of particles detected.
+
+```python
+def diferencia(image1, image2):
+    x1, y1, x2, y2 = 475, 105, 1115, 740 #size of the image track
+    frame1 = image1[y1:y2, x1:x2]
+    frame2 = image2[y1:y2, x1:x2]
+    frame2_new = copy.copy(frame2)
+
+    # calculate the diff between both frames
+    diferencia = cv2.absdiff(frame1, frame2_new)
+    
+    # convert the diff into a gray scale
+    diferencia_gris = cv2.cvtColor(diferencia, cv2.COLOR_BGR2GRAY)
+    
+    # apply a thresold to see the resultss
+    _, umbralizada = cv2.threshold(diferencia_gris, 25, 255, cv2.THRESH_BINARY)
+    
+    #  Find the contours of the thresholded differences
+    contornos, _ = cv2.findContours(umbralizada, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    
+    diferencias = False
+    # verify if contours have been found
+    if len(contornos) > 0:
+        # Draw the contours on the original frame (frame2) with a thickness of 1 pixel
+        for contorno in contornos:
+            x, y, w, h = cv2.boundingRect(contorno)
+            cv2.rectangle(frame2_new, (x, y), (x + w, y + h), (0, 255, 0), 1)
+        diferencias = True
+        return diferencias, frame1, frame2, frame2_new, umbralizada, contornos
+    else:
+        return diferencias, frame1, frame2, frame2_new, umbralizada
+```
+
+The input of the function consists of two consecutive frames, and the output provides us with the image showing the difference in tracks in a thresholded manner
+
+
+
+
+
+```python
+def name_of_frame(n_muons_dif, n_e_dif, n_alphas_dif):
+    if n_muons_dif!=0 and n_e_dif ==0 and n_alphas_dif==0:
+        name='muon'   
+        return name
+    if n_muons_dif==0 and n_e_dif !=0 and n_alphas_dif==0:
+        name='electron'
+        return name
+    if n_muons_dif==0 and n_e_dif ==0 and n_alphas_dif!=0:
+        name='alpha' 
+        return name
+    if n_muons_dif!=0 and n_e_dif !=0 and n_alphas_dif==0:
+        name='muon or electron'
+        return name
+    else:
+        name='nada'
+        return name
+```
+
+```python
+def particle_dif(n_particle_1, n_particle_2):
+    n_particle_dif=0
+    if n_particle_1 is not None and n_particle_2 is not None:
+        n_particle_dif=n_particle_2-n_particle_1
+    return n_particle_dif
+```
+
+
+With these definitions we are able to relate the thresholded image of the new trace found with the `diferencias()` function, which is associated with differences in the text indicating which particle it corresponds to using the `n_particles() particle_dif()` functions.
