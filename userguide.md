@@ -173,3 +173,5 @@ def n_particles(image):
     
     return n_total, n_alphas, n_e, n_muons
 ```
+ and the corresponding values are stored in the variables: n_total, n_alphas, n_e, n_muons
+
